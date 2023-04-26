@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Heading,
@@ -11,10 +11,23 @@ import {
   Grid,
   GridItem,
   Divider,
-} from "@chakra-ui/react";
-
-import { chain, assets, asset_list } from '@chain-registry/osmosis';
-interface PoolsData {
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Select,
+} from '@chakra-ui/react';
+import { RootStore } from '../store';
+import { observer } from 'mobx-react-lite';
+import { Asset } from '@chain-registry/types';
+// import { asset_list } from '@chain-registry/osmosis';
+export interface PoolsData {
   id: string;
   token1: { name: string; imgSrc: string };
   token2: { name: string; imgSrc: string };
@@ -25,7 +38,7 @@ interface PoolsData {
   longestDaysUnbonding: boolean;
 }
 
-const PoolsCard = ({ poolsData }: { poolsData: PoolsData[] }) => {
+const PoolsCard = observer(({ poolsData }: { poolsData: PoolsData[] }) => {
   return (
     <SimpleGrid columns={{ sm: 2, lg: 4 }} gap={4} mb={8}>
       {poolsData.map(
@@ -46,35 +59,28 @@ const PoolsCard = ({ poolsData }: { poolsData: PoolsData[] }) => {
               border="1px solid"
               borderColor={
                 longestDaysUnbonding
-                  ? useColorModeValue("primary.500", "primary.300")
-                  : "transparent"
+                  ? useColorModeValue('primary.500', 'primary.300')
+                  : 'transparent'
               }
               boxShadow="md"
               _hover={{
-                cursor: "pointer",
+                cursor: 'pointer',
                 borderColor: longestDaysUnbonding
-                  ? useColorModeValue("primary.500", "primary.300")
-                  : "orange.300",
+                  ? useColorModeValue('primary.500', 'primary.300')
+                  : 'orange.300',
               }}
-              bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}
+              bg={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
               p={4}
             >
               <Flex align="center" mb={4}>
-                <Flex
-                  position="relative"
-                  align="center"
-                  pr={{ base: 10, sm: 14 }}
-                >
+                <Flex position="relative" align="center" pr={{ base: 10, sm: 14 }}>
                   <Box
                     w={{ base: 12, md: 14, lg: 16 }}
                     h={{ base: 12, md: 14, lg: 16 }}
                     bg="whiteAlpha.900"
                     borderRadius="full"
                     border="1px solid"
-                    borderColor={useColorModeValue(
-                      "primary.100",
-                      "primary.900"
-                    )}
+                    borderColor={useColorModeValue('primary.100', 'primary.900')}
                     overflow="hidden"
                     p={0.5}
                   >
@@ -88,10 +94,7 @@ const PoolsCard = ({ poolsData }: { poolsData: PoolsData[] }) => {
                     bg="whiteAlpha.900"
                     borderRadius="full"
                     border="1px solid"
-                    borderColor={useColorModeValue(
-                      "primary.100",
-                      "primary.900"
-                    )}
+                    borderColor={useColorModeValue('primary.100', 'primary.900')}
                     overflow="hidden"
                     p={0.5}
                   >
@@ -104,32 +107,23 @@ const PoolsCard = ({ poolsData }: { poolsData: PoolsData[] }) => {
                   </Text>
                   <Text
                     fontWeight="bold"
-                    color={useColorModeValue(
-                      "blackAlpha.600",
-                      "whiteAlpha.600"
-                    )}
+                    color={useColorModeValue('blackAlpha.600', 'whiteAlpha.600')}
                     wordBreak="break-word"
                   >
                     {token1.name}/{token2.name}
                   </Text>
                 </Flex>
               </Flex>
-              <Grid
-                templateColumns={{ lg: "1fr 1fr" }}
-                gap={{ base: 2, md: 4 }}
-              >
+              <Grid templateColumns={{ lg: '1fr 1fr' }} gap={{ base: 2, md: 4 }}>
                 <GridItem>
                   <Text
                     fontWeight="semibold"
-                    color={useColorModeValue(
-                      "blackAlpha.600",
-                      "whiteAlpha.600"
-                    )}
+                    color={useColorModeValue('blackAlpha.600', 'whiteAlpha.600')}
                   >
                     Pool Liquidity
                   </Text>
                   <Text
-                    fontSize={{ base: "lg", sm: "xl" }}
+                    fontSize={{ base: 'lg', sm: 'xl' }}
                     fontWeight="extrabold"
                     wordBreak="break-word"
                   >
@@ -139,145 +133,130 @@ const PoolsCard = ({ poolsData }: { poolsData: PoolsData[] }) => {
                 <GridItem>
                   <Text
                     fontWeight="semibold"
-                    color={useColorModeValue(
-                      "blackAlpha.600",
-                      "whiteAlpha.600"
-                    )}
+                    color={useColorModeValue('blackAlpha.600', 'whiteAlpha.600')}
                   >
                     Apr
                   </Text>
-                  <Text
-                    fontSize={{ base: "lg", sm: "xl" }}
-                    fontWeight="extrabold"
-                  >
+                  <Text fontSize={{ base: 'lg', sm: 'xl' }} fontWeight="extrabold">
                     {apr}%
                   </Text>
                 </GridItem>
                 <GridItem colSpan={{ lg: 2 }}>
-                  <Divider
-                    borderColor={useColorModeValue(
-                      "primary.300",
-                      "primary.100"
-                    )}
-                  />
+                  <Divider borderColor={useColorModeValue('primary.300', 'primary.100')} />
                 </GridItem>
                 <GridItem>
                   <Text
                     fontWeight="semibold"
-                    color={useColorModeValue(
-                      "blackAlpha.600",
-                      "whiteAlpha.600"
-                    )}
+                    color={useColorModeValue('blackAlpha.600', 'whiteAlpha.600')}
                   >
                     My Liquidity
                   </Text>
-                  <Text
-                    fontSize={{ base: "lg", sm: "xl" }}
-                    fontWeight="extrabold"
-                  >
+                  <Text fontSize={{ base: 'lg', sm: 'xl' }} fontWeight="extrabold">
                     ${myLiquidity}
                   </Text>
                 </GridItem>
                 <GridItem>
                   <Text
                     fontWeight="semibold"
-                    color={useColorModeValue(
-                      "blackAlpha.600",
-                      "whiteAlpha.600"
-                    )}
+                    color={useColorModeValue('blackAlpha.600', 'whiteAlpha.600')}
                   >
                     My Bounded Amount
                   </Text>
-                  <Text
-                    fontSize={{ base: "lg", sm: "xl" }}
-                    fontWeight="extrabold"
-                  >
+                  <Text fontSize={{ base: 'lg', sm: 'xl' }} fontWeight="extrabold">
                     ${myBoundedAmount}
                   </Text>
                 </GridItem>
               </Grid>
             </Box>
           );
-        }
+        },
       )}
     </SimpleGrid>
   );
+});
+
+type listPoolsProps = {
+  data: RootStore;
 };
 
-export default function ListPools() {
-  const [poolsData, setPoolsData] = useState<PoolsData[]>([]);
+function ListPools({ data }: listPoolsProps) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [asset1, setAsset1] = useState({} as Asset);
+  const [asset2, setAsset2] = useState({} as Asset);
 
-  useEffect(() => {
-    const getShuffledArr = (arr: any[]) => {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const rand = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[rand]] = [arr[rand], arr[i]];
-      }
-      return arr;
-    };
-    const allTokens = asset_list.assets.map(({ name, logo_URIs }) => ({
-      name: name,
-      imgSrc: logo_URIs.png,
-    }));
-    const poolOptionToken1 = getShuffledArr([...allTokens]);
-    const poolOptionToken2 = getShuffledArr([...allTokens]).filter(
-      (v, i) => v !== poolOptionToken1[i]
-    );
-    const getRandomId = getShuffledArr(
-      [...Array(500)].map((v, i) => (v = i + 1))
-    ).slice(0, 4);
-    const getRandomPoolLiquidity = [...Array(4)].fill(undefined).map((_) => {
-      return parseInt(
-        getShuffledArr([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-          .toString()
-          .replaceAll(",", "")
-      );
-    });
-    const getRandomMyLiquidity = [...Array(4)].fill(undefined).map((_) => {
-      return parseInt(
-        getShuffledArr([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-          .toString()
-          .slice(0, 5)
-          .replaceAll(",", "")
-      );
-    });
-    const getRandomAPR = [...Array(4)].fill(undefined).map((_) => {
-      return (
-        parseInt(
-          getShuffledArr([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-            .toString()
-            .slice(0, 7)
-            .replaceAll(",", "")
-        ) / 100
-      );
-    });
-    const getDefaultData = [...Array(4)].fill(undefined).map((_, i) => ({
-      id: getRandomId[i],
-      token1: poolOptionToken1[i],
-      token2: poolOptionToken2[i],
-      poolLiquidity: getRandomPoolLiquidity[i],
-      apr: getRandomAPR[i],
-      myLiquidity: getRandomMyLiquidity[i],
-      myBoundedAmount: getRandomMyLiquidity[i],
-      longestDaysUnbonding: Math.random() < 0.5,
-    }));
-    // console.log("getRandomAPR", getDefaultData);
-    setPoolsData(getDefaultData);
-  }, []);
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>, type: string) => {
+    const selectedValue = e.target.value;
+    if (type === 'first') {
+      setAsset1(JSON.parse(selectedValue));
+    } else {
+      setAsset2(JSON.parse(selectedValue));
+    }
+  };
 
+  const handleAddPool = () => {
+    if (asset1.name !== asset2.name) {
+      data.poolStore.addPool(asset1, asset2);
+      onClose();
+    }
+  };
   return (
     <Box p={4}>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add new Pool</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <FormControl>
+              <FormLabel>First Asset</FormLabel>
+              <Select placeholder="Select asset1" onChange={(e) => handleChange(e, 'first')}>
+                {data.assetStore.filterAsset(asset2).map((asset) => (
+                  <option key={asset.id} value={JSON.stringify(asset)}>
+                    {asset.name}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>Second Asset</FormLabel>
+              <Select placeholder="Select asset2" onChange={(e) => handleChange(e, 'second')}>
+                {data.assetStore.filterAsset(asset1).map((asset) => (
+                  <option key={asset.id} value={JSON.stringify(asset)}>
+                    {asset.name}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleAddPool}>
+              Save
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Flex align="center" mb={6}>
         <Heading as="h2" fontSize="2xl" mr={4}>
           Active Pools
         </Heading>
-        <Button display={{ base: "none", sm: "block" }}>Create New Pool</Button>
+        <Button
+          display={{ base: 'none', sm: 'block' }}
+          onClick={() => {
+            onOpen();
+            // data.poolStore.addPool(data.assetStore.assets[0], data.assetStore.assets[1]);
+          }}
+        >
+          Create New Pool
+        </Button>
       </Flex>
-      <SimpleGrid columns={{ sm: 2 }} gap={4} maxW={{ sm: "md" }} mb={8}>
+      <SimpleGrid columns={{ sm: 2 }} gap={4} maxW={{ sm: 'md' }} mb={8}>
         <Box>
           <Text
             fontWeight="semibold"
-            color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}
+            color={useColorModeValue('blackAlpha.600', 'whiteAlpha.600')}
             mb={1}
           >
             OSMO Price
@@ -289,7 +268,7 @@ export default function ListPools() {
         <Box>
           <Text
             fontWeight="semibold"
-            color={useColorModeValue("blackAlpha.600", "whiteAlpha.600")}
+            color={useColorModeValue('blackAlpha.600', 'whiteAlpha.600')}
             mb={2}
           >
             Reward distribution on
@@ -300,7 +279,7 @@ export default function ListPools() {
             </Text>
             <Box
               borderRadius="lg"
-              bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}
+              bg={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
               px={3}
               mx={1}
             >
@@ -313,7 +292,7 @@ export default function ListPools() {
             </Text>
             <Box
               borderRadius="lg"
-              bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}
+              bg={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
               px={3}
               mx={1}
             >
@@ -324,17 +303,14 @@ export default function ListPools() {
           </Flex>
         </Box>
       </SimpleGrid>
-      <Box
-        bg={useColorModeValue("blackAlpha.50", "whiteAlpha.50")}
-        m={-4}
-        px={4}
-        py={6}
-      >
+      <Box bg={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')} m={-4} px={4} py={6}>
         <Text fontSize="2xl" fontWeight="bold" mb={4}>
           My Pools
         </Text>
-        <PoolsCard poolsData={poolsData} />
+        <PoolsCard poolsData={data.poolStore.poolsData} />
       </Box>
     </Box>
   );
 }
+
+export default observer(ListPools);
